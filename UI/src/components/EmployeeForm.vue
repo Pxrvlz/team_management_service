@@ -26,33 +26,33 @@ const submitForm = () => {
 <template>
   <form @submit.prevent="submitForm" class="p-3">
     <div class="mb-3">
-      <label class="form-label">Name</label>
+      <label class="form-label">اسم</label>
       <input v-model="formData.name" type="text" class="form-control" required>
     </div>
     <div class="mb-3">
-      <label class="form-label">Email</label>
+      <label class="form-label">ایمیل</label>
       <input v-model="formData.email" type="email" class="form-control" required>
     </div>
     <div class="mb-3">
-      <label class="form-label">Phone</label>
+      <label class="form-label">شماره تلفن</label>
       <input v-model="formData.phone" type="tel" class="form-control" required>
     </div>
     <div class="mb-3">
-      <label class="form-label">Position</label>
+      <label class="form-label">جایگاه شغلی</label>
       <input v-model="formData.position" type="text" class="form-control" required>
     </div>
     <div class="mb-3">
-      <label class="form-label">Salary</label>
+      <label class="form-label">دستمزد</label>
       <input v-model.number="formData.salary" type="number" class="form-control" required>
     </div>
     <div class="mb-3">
-      <label class="form-label">Age</label>
+      <label class="form-label">سن</label>
       <input v-model.number="formData.age" type="number" class="form-control" required>
     </div>
     <div class="mb-3">
-      <label class="form-label">Team ID</label>
+      <label class="form-label">آی دی تیم</label>
       <input v-model.number="formData.team_id" type="number" class="form-control">
     </div>
-    <button type="submit" class="btn btn-primary">{{ props.employee ? 'Update' : 'Add' }} Employee</button>
+    <button type="submit" class="btn btn-primary">{{ props.employee ? 'بروزرسانی' : 'اضافه کردن' }} کارمند</button>
   </form>
 </template>

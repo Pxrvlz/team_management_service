@@ -22,17 +22,17 @@ const submitForm = () => {
 <template>
   <form @submit.prevent="submitForm" class="p-3">
     <div class="mb-3">
-      <label class="form-label">Team Name</label>
+      <label class="form-label">اسم تیم</label>
       <input v-model="formData.name" type="text" class="form-control" required>
     </div>
     <div class="mb-3">
-      <label class="form-label">Description</label>
+      <label class="form-label">توضیحات</label>
       <textarea v-model="formData.description" class="form-control" required></textarea>
     </div>
     <div class="mb-3">
-      <label class="form-label">Leader ID</label>
+      <label class="form-label">آی دی سر گروه</label>
       <input v-model.number="formData.leader_id" type="number" class="form-control">
     </div>
-    <button type="submit" class="btn btn-primary">{{ props.team ? 'Update' : 'Add' }} Team</button>
+    <button type="submit" class="btn btn-primary">{{ props.team ? 'بروزرسانی' : 'اضافه کردن' }} تیم</button>
   </form>
 </template>
