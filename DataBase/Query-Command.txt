@@ -1,0 +1,28 @@
+-- ایجاد دیتابیس جدید برای مدیریت تیم‌ها
+CREATE DATABASE IF NOT EXISTS team_management_service;
+
+-- استفاده از دیتابیس ایجاد شده
+USE team_management_service;
+
+-- جدول برای کارمندان
+-- مرحله 1: ایجاد جدول 'employees' برای ذخیره اطلاعات کارمندان
+CREATE TABLE IF NOT EXISTS employees (
+    id INT AUTO_INCREMENT PRIMARY KEY,           -- شناسه کارمند
+    name VARCHAR(100) NOT NULL,                  -- نام کارمند
+    email VARCHAR(100) UNIQUE NOT NULL,          -- ایمیل کارمند
+    phone VARCHAR(20),                           -- شماره تماس کارمند
+    position VARCHAR(50),                        -- سمت کارمند
+    salary FLOAT NOT NULL,                       -- حقوق کارمند
+    age INT NOT NULL,                            -- سن کارمند
+    team_id INT                                   -- شناسه تیم (اختیاری، می‌توان بعداً اضافه کرد)
+);
+
+-- جدول برای تیم‌ها
+-- مرحله 2: ایجاد جدول 'teams' برای ذخیره اطلاعات تیم‌ها
+CREATE TABLE IF NOT EXISTS teams (
+    id INT AUTO_INCREMENT PRIMARY KEY,           -- شناسه تیم
+    name VARCHAR(100) NOT NULL,                  -- نام تیم
+    description TEXT,                            -- توضیحات تیم
+    leader_id INT,                               -- شناسه رهبر تیم (کلید خارجی به جدول 'employees')
+    FOREIGN KEY (leader_id) REFERENCES employees(id) ON DELETE SET NULL -- کلید خارجی برای ارتباط با رهبر تیم‌ها
+);
