@@ -13,7 +13,7 @@ const loadEmployees = async () => {
     const response = await employeeService.getAll();
     employees.value = response.data;
   } catch (error) {
-    alert('Failed to load employees');
+    alert('خطا در نمایش کارمند ها');
   }
 };
 
@@ -28,7 +28,7 @@ const handleSubmit = async (employee: Employee) => {
     showForm.value = false;
     selectedEmployee.value = null;
   } catch (error) {
-    alert('Failed to save employee');
+    alert('خطا در ذخیره کارمند');
   }
 };
 
@@ -38,12 +38,12 @@ const editEmployee = (employee: Employee) => {
 };
 
 const deleteEmployee = async (id: number) => {
-  if (confirm('Are you sure you want to delete this employee?')) {
+  if (confirm('آیا مطمئن هستید که می خواهید این کارمند را حذف کنید؟')) {
     try {
       await employeeService.delete(id);
       await loadEmployees();
     } catch (error) {
-      alert('Failed to delete employee');
+      alert('خطا در حذف کارمند');
     }
   }
 };
@@ -53,9 +53,9 @@ onMounted(loadEmployees);
 
 <template>
   <div class="container mt-4">
-    <h2>Employee Management</h2>
+    <h2>مدیریت کارمند ها</h2>
     <button @click="showForm = !showForm" class="btn btn-primary mb-3">
-      {{ showForm ? 'Hide Form' : 'Add Employee' }}
+      {{ showForm ? 'مخفی کردن' : 'اضافه کردن کارمند' }}
     </button>
     
     <div v-if="showForm">
@@ -68,11 +68,11 @@ onMounted(loadEmployees);
     <table class="table">
       <thead>
         <tr>
-          <th>Name</th>
-          <th>Email</th>
-          <th>Position</th>
-          <th>Team</th>
-          <th>Actions</th>
+          <th>اسم</th>
+          <th>ایمیل</th>
+          <th>جایگاه</th>
+          <th>تیم</th>
+          <th>فعالیت ها</th>
         </tr>
       </thead>
       <tbody>

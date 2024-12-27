@@ -13,7 +13,7 @@ const loadTeams = async () => {
     const response = await teamService.getAll();
     teams.value = response.data;
   } catch (error) {
-    alert('Failed to load teams');
+    alert('خطا در نمایش تیم ها');
   }
 };
 
@@ -28,7 +28,7 @@ const handleSubmit = async (team: Team) => {
     showForm.value = false;
     selectedTeam.value = null;
   } catch (error) {
-    alert('Failed to save team');
+    alert('خطا در ذخیره تیم');
   }
 };
 
@@ -38,12 +38,12 @@ const editTeam = (team: Team) => {
 };
 
 const deleteTeam = async (id: number) => {
-  if (confirm('Are you sure you want to delete this team?')) {
+  if (confirm('آیا مطمئن هستید که می خواهید این تیم را حذف کنید؟')) {
     try {
       await teamService.delete(id);
       await loadTeams();
     } catch (error) {
-      alert('Failed to delete team');
+      alert('خطا در حذف تیم');
     }
   }
 };
@@ -53,9 +53,9 @@ onMounted(loadTeams);
 
 <template>
   <div class="container mt-4">
-    <h2>Team Management</h2>
+    <h2>مدیریت تیم ها</h2>
     <button @click="showForm = !showForm" class="btn btn-primary mb-3">
-      {{ showForm ? 'Hide Form' : 'Add Team' }}
+      {{ showForm ? 'مخفی کردن' : 'اضافه کردن تیم' }}
     </button>
     
     <div v-if="showForm">
@@ -68,11 +68,11 @@ onMounted(loadTeams);
     <table class="table">
       <thead>
         <tr>
-          <th>Name</th>
-          <th>Description</th>
-          <th>Leader</th>
-          <th>Members</th>
-          <th>Actions</th>
+          <th>اسم</th>
+          <th>توضیحات</th>
+          <th>سرگروه</th>
+          <th>عضوها</th>
+          <th>فعالیت ها</th>
         </tr>
       </thead>
       <tbody>
