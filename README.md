@@ -1,6 +1,6 @@
 ## About The Project
 
-![Product Screenshot](https://picsum.photos/1920/1080)
+![Product Screenshot](https://cdn.shopaccino.com/igmguru/articles/Learn-Golang.png?)
 
 <div dir="rtl">
 
