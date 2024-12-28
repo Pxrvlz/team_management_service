@@ -76,7 +76,7 @@ go clean -modcache
 در فایل `main.go`، بخش اتصال به پایگاه داده با استفاده از MySQL تنظیم شده است. اطمینان حاصل کنید که اطلاعات اتصال به پایگاه داده شما صحیح است:
 
 ```go
-db, err = sql.Open("mysql", "admin:12345678@tcp(localhost:3306)/team_management_service")
+db, err = sql.Open("mysql", "UserName:PassWord@tcp(localhost:3306)/DB-Name")
 ```
 
 در صورتی که از اطلاعات دیگری برای اتصال به دیتابیس استفاده می‌کنید، این بخش را تغییر دهید.
