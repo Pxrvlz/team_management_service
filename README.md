@@ -57,8 +57,10 @@ git clone https://github.com/Pxrvlz/team_management_service.git
 cd team_management_service
 ```
 
-سپس dependenciesهای Go را نصب کنید:
-
+سپس dependenciesهای Go را نصب کنید ابتدا به دایرکتوری `API` بروید:
+```bash
+cd API
+```
 ```bash
 go mod tidy
 ```
