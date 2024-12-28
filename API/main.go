@@ -4,12 +4,12 @@ import (
 	"database/sql"
 	"log"
 
-	_ "github.com/go-sql-driver/mysql" 
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 )
 
-//تعریف مدل کارمند
+// تعریف مدل کارمند
 type Employee struct {
 	ID       int     `json:"id"`        // شناسه کارمند
 	Name     string  `json:"name"`      // نام کارمند
@@ -22,7 +22,7 @@ type Employee struct {
 	TeamName *string `json:"team_name"` // نام تیم (اختیاری)
 }
 
-//تعریف مدل تیم
+// تعریف مدل تیم
 type Team struct {
 	ID          int     `json:"id"`           // شناسه تیم
 	Name        string  `json:"name"`         // نام تیم
@@ -32,32 +32,32 @@ type Team struct {
 	MemberCount int     `json:"member_count"` // تعداد اعضای تیم
 }
 
-//متغیر برای ذخیره‌سازی اتصال به پایگاه داده
+// متغیر برای ذخیره‌سازی اتصال به پایگاه داده
 var db *sql.DB
 
-//تابع اتصال به پایگاه داده
+// تابع اتصال به پایگاه داده
 func Connect() error {
 	var err error
-	// اتصال به پایگاه داده MySQL. اطلاعات اتصال شامل کاربر، رمز عبور، میزبان و نام پایگاه داده می‌باشد.
+	//اتصال به پایگاه داده MySQL. اطلاعات اتصال شامل کاربر، رمز عبور، میزبان و نام پایگاه داده می‌باشد.
 	db, err = sql.Open("mysql", "admin:12345678@tcp(localhost:3306)/team_management_service")
 	if err != nil {
-		return err 
+		return err
 	}
 
-	// بررسی اتصال به پایگاه داده
+	//بررسی اتصال به پایگاه داده
 	err = db.Ping()
 	if err != nil {
-		return err 
+		return err
 	}
 
-	log.Println("اتصال به پایگاه داده با موفقیت انجام شد")
+	log.Println("Connecting To DB Was OK")
 	return nil
 }
 
 func main() {
 	//اتصال به پایگاه داده هنگام شروع برنامه
 	if err := Connect(); err != nil {
-		log.Fatal("خطا در اتصال به پایگاه داده:", err)
+		log.Fatal("Error In Connecting To DB:", err)
 	}
 
 	//ایجاد برنامه با استفاده از فایبر
@@ -81,9 +81,9 @@ func main() {
 	//تنظیم مدیریت خطاهای 500 برای برنامه فایبر
 	app.Use(func(c *fiber.Ctx) error {
 		if err := c.Next(); err != nil {
-			log.Printf("خطای سرور داخلی: %v", err)
+			log.Printf("Error In Local Host: %v", err)
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"error": "خطای سرور داخلی. لطفاً دوباره تلاش کنید.",
+				"error": "Error In Local Host",
 			})
 		}
 		return nil
@@ -92,7 +92,7 @@ func main() {
 	log.Fatal(app.Listen(":3000"))
 }
 
-//تابع برای دریافت تمام کارمندان
+// تابع برای دریافت تمام کارمندان
 func getEmployees(c *fiber.Ctx) error {
 	//کوئری برای دریافت اطلاعات کارمندان و تیم مرتبط
 	query := `
@@ -103,7 +103,7 @@ func getEmployees(c *fiber.Ctx) error {
 	//اجرای کوئری
 	rows, err := db.Query(query)
 	if err != nil {
-		return c.Status(500).SendString("خطا در دریافت اطلاعات کارمندان")
+		return c.Status(500).SendString("Error In Loading Employee")
 	}
 	defer rows.Close()
 
@@ -112,7 +112,7 @@ func getEmployees(c *fiber.Ctx) error {
 		var emp Employee
 		err := rows.Scan(&emp.ID, &emp.Name, &emp.Email, &emp.Phone, &emp.Position, &emp.Salary, &emp.Age, &emp.TeamID, &emp.TeamName)
 		if err != nil {
-			return c.Status(500).SendString("خطا در پردازش اطلاعات کارمندان")
+			return c.Status(500).SendString("Error In Loading Employee")
 		}
 		employees = append(employees, emp)
 	}
@@ -120,11 +120,11 @@ func getEmployees(c *fiber.Ctx) error {
 	return c.JSON(employees) //بازگشت اطلاعات کارمندان به صورت JSON
 }
 
-//تابع برای اضافه کردن کارمند جدید
+// تابع برای اضافه کردن کارمند جدید
 func addEmployee(c *fiber.Ctx) error {
 	emp := new(Employee)
 	if err := c.BodyParser(emp); err != nil {
-		return c.Status(400).SendString("داده‌های ورودی نامعتبر")
+		return c.Status(400).SendString("Bad Data Entry")
 	}
 
 	//کوئری برای درج اطلاعات کارمند جدید
@@ -133,7 +133,7 @@ func addEmployee(c *fiber.Ctx) error {
 	VALUES (?, ?, ?, ?, ?, ?, ?)`
 	result, err := db.Exec(query, emp.Name, emp.Email, emp.Phone, emp.Position, emp.Salary, emp.Age, emp.TeamID)
 	if err != nil {
-		return c.Status(500).SendString("خطا در اضافه کردن کارمند")
+		return c.Status(500).SendString("Error In Adding Employee")
 	}
 
 	//دریافت شناسه کارمند جدید
@@ -142,12 +142,12 @@ func addEmployee(c *fiber.Ctx) error {
 	return c.Status(201).JSON(emp)
 }
 
-//تابع برای به‌روزرسانی اطلاعات کارمند
+// تابع برای به‌روزرسانی اطلاعات کارمند
 func updateEmployee(c *fiber.Ctx) error {
 	id := c.Params("id")
 	emp := new(Employee)
 	if err := c.BodyParser(emp); err != nil {
-		return c.Status(400).SendString("داده‌های ورودی نامعتبر")
+		return c.Status(400).SendString("Bad Data Entry")
 	}
 
 	//کوئری برای به‌روزرسانی اطلاعات کارمند
@@ -157,26 +157,26 @@ func updateEmployee(c *fiber.Ctx) error {
 	WHERE id = ?`
 	_, err := db.Exec(query, emp.Name, emp.Email, emp.Phone, emp.Position, emp.Salary, emp.Age, emp.TeamID, id)
 	if err != nil {
-		return c.Status(500).SendString("خطا در به‌روزرسانی اطلاعات کارمند")
+		return c.Status(500).SendString("Error In Updating Employee")
 	}
 
 	return c.Status(200).JSON(emp)
 }
 
-//تابع برای حذف کارمند
+// تابع برای حذف کارمند
 func deleteEmployee(c *fiber.Ctx) error {
 	id := c.Params("id") //دریافت شناسه کارمند از مسیر
 
 	//کوئری برای حذف کارمند
 	_, err := db.Exec("DELETE FROM employees WHERE id = ?", id)
 	if err != nil {
-		return c.Status(500).SendString("خطا در حذف کارمند")
+		return c.Status(500).SendString("Error In Deleting Employee")
 	}
 
-	return c.SendString("کارمند حذف شد")
+	return c.SendString("Employee Deleted")
 }
 
-//تابع برای دریافت تمام تیم‌ها
+// تابع برای دریافت تمام تیم‌ها
 func getTeams(c *fiber.Ctx) error {
 	query := `SELECT t.id, t.name, t.description, t.leader_id, e.name AS leader_name, 
               (SELECT COUNT(*) FROM employees WHERE team_id = t.id) AS member_count
@@ -185,8 +185,8 @@ func getTeams(c *fiber.Ctx) error {
 
 	rows, err := db.Query(query)
 	if err != nil {
-		log.Printf("خطا در اجرای کوئری: %v", err)
-		return c.Status(500).SendString("خطا در دریافت اطلاعات تیم‌ها")
+		log.Printf("Error In Running Query: %v", err)
+		return c.Status(500).SendString("Error In Loading Team Data")
 	}
 	defer rows.Close()
 
@@ -195,8 +195,8 @@ func getTeams(c *fiber.Ctx) error {
 		var team Team
 		err := rows.Scan(&team.ID, &team.Name, &team.Description, &team.LeaderID, &team.LeaderName, &team.MemberCount)
 		if err != nil {
-			log.Printf("خطا در پردازش ردیف: %v", err)
-			return c.Status(500).SendString("خطا در پردازش اطلاعات تیم‌ها")
+			log.Printf("Error In Loading Row: %v", err)
+			return c.Status(500).SendString("Error In Loading Team Data")
 		}
 		teams = append(teams, team)
 	}
@@ -204,11 +204,11 @@ func getTeams(c *fiber.Ctx) error {
 	return c.JSON(teams)
 }
 
-//تابع برای اضافه کردن تیم جدید
+// تابع برای اضافه کردن تیم جدید
 func addTeam(c *fiber.Ctx) error {
 	team := new(Team)
 	if err := c.BodyParser(team); err != nil {
-		return c.Status(400).SendString("داده‌های ورودی نامعتبر")
+		return c.Status(400).SendString("Bad Data Entry")
 	}
 
 	//کوئری برای درج تیم جدید
@@ -217,7 +217,7 @@ func addTeam(c *fiber.Ctx) error {
 	VALUES (?, ?, ?)`
 	result, err := db.Exec(query, team.Name, team.Description, team.LeaderID)
 	if err != nil {
-		return c.Status(500).SendString("خطا در اضافه کردن تیم")
+		return c.Status(500).SendString("Error In Adding Team")
 	}
 
 	//دریافت شناسه تیم جدید
@@ -226,12 +226,12 @@ func addTeam(c *fiber.Ctx) error {
 	return c.Status(201).JSON(team)
 }
 
-//تابع برای به‌روزرسانی اطلاعات تیم
+// تابع برای به‌روزرسانی اطلاعات تیم
 func updateTeam(c *fiber.Ctx) error {
-	id := c.Params("id") 
+	id := c.Params("id")
 	team := new(Team)
 	if err := c.BodyParser(team); err != nil {
-		return c.Status(400).SendString("داده‌های ورودی نامعتبر")
+		return c.Status(400).SendString("Bad Data Entry")
 	}
 
 	//کوئری برای به‌روزرسانی اطلاعات تیم
@@ -241,19 +241,19 @@ func updateTeam(c *fiber.Ctx) error {
 	WHERE id = ?`
 	_, err := db.Exec(query, team.Name, team.Description, team.LeaderID, id)
 	if err != nil {
-		return c.Status(500).SendString("خطا در به‌روزرسانی تیم")
+		return c.Status(500).SendString("Error In Updating Team")
 	}
 
 	return c.Status(200).JSON(team)
 }
 
-//تابع برای حذف تیم
+// تابع برای حذف تیم
 func deleteTeam(c *fiber.Ctx) error {
 	id := c.Params("id")
 	_, err := db.Exec("DELETE FROM teams WHERE id = ?", id)
 	if err != nil {
-		return c.Status(500).SendString("خطا در حذف تیم")
+		return c.Status(500).SendString("Error In Deleting Team")
 	}
 
-	return c.SendString("تیم حذف شد")
+	return c.SendString("Team Deleted")
 }
