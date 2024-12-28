@@ -122,7 +122,7 @@ func getEmployees(c *fiber.Ctx) error {
 
 //تابع برای اضافه کردن کارمند جدید
 func addEmployee(c *fiber.Ctx) error {
-	emp := new(Employee) // ایجاد یک مدل خالی برای دریافت داده‌های ورودی
+	emp := new(Employee)
 	if err := c.BodyParser(emp); err != nil {
 		return c.Status(400).SendString("داده‌های ورودی نامعتبر")
 	}
@@ -144,8 +144,8 @@ func addEmployee(c *fiber.Ctx) error {
 
 //تابع برای به‌روزرسانی اطلاعات کارمند
 func updateEmployee(c *fiber.Ctx) error {
-	id := c.Params("id") //دریافت شناسه کارمند از مسیر
-	emp := new(Employee) //ایجاد یک مدل خالی برای دریافت داده‌های ورودی
+	id := c.Params("id")
+	emp := new(Employee)
 	if err := c.BodyParser(emp); err != nil {
 		return c.Status(400).SendString("داده‌های ورودی نامعتبر")
 	}
