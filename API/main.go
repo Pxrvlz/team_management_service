@@ -9,7 +9,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 )
 
-// ** تعریف مدل کارمند **
+//تعریف مدل کارمند
 type Employee struct {
 	ID       int     `json:"id"`        // شناسه کارمند
 	Name     string  `json:"name"`      // نام کارمند
@@ -22,7 +22,7 @@ type Employee struct {
 	TeamName *string `json:"team_name"` // نام تیم (اختیاری)
 }
 
-// ** تعریف مدل تیم **
+//تعریف مدل تیم
 type Team struct {
 	ID          int     `json:"id"`           // شناسه تیم
 	Name        string  `json:"name"`         // نام تیم
@@ -32,22 +32,22 @@ type Team struct {
 	MemberCount int     `json:"member_count"` // تعداد اعضای تیم
 }
 
-// متغیر برای ذخیره‌سازی اتصال به پایگاه داده
+//متغیر برای ذخیره‌سازی اتصال به پایگاه داده
 var db *sql.DB
 
-// ** تابع اتصال به پایگاه داده **
+//تابع اتصال به پایگاه داده
 func Connect() error {
 	var err error
 	// اتصال به پایگاه داده MySQL. اطلاعات اتصال شامل کاربر، رمز عبور، میزبان و نام پایگاه داده می‌باشد.
 	db, err = sql.Open("mysql", "admin:12345678@tcp(localhost:3306)/team_management_service")
 	if err != nil {
-		return err // در صورت بروز خطا در اتصال، خطا را باز می‌گرداند
+		return err 
 	}
 
 	// بررسی اتصال به پایگاه داده
 	err = db.Ping()
 	if err != nil {
-		return err // در صورت عدم موفقیت در اتصال، خطا را باز می‌گرداند
+		return err 
 	}
 
 	log.Println("اتصال به پایگاه داده با موفقیت انجام شد")
@@ -55,32 +55,31 @@ func Connect() error {
 }
 
 func main() {
-	// ** اتصال به پایگاه داده هنگام شروع برنامه **
+	//اتصال به پایگاه داده هنگام شروع برنامه
 	if err := Connect(); err != nil {
 		log.Fatal("خطا در اتصال به پایگاه داده:", err)
 	}
 
-	// ** ایجاد برنامه با استفاده از فایبر **
+	//ایجاد برنامه با استفاده از فایبر
 	app := fiber.New()
 
-	// ** فعال کردن CORS برای تمام مسیرها **
+	//فعال کردن CORS برای تمام مسیرها
 	app.Use(cors.New())
 
-	// ** تعریف مسیرهای مدیریت کارمندان **
+	//تعریف مسیرهای مدیریت کارمندان
 	app.Get("/employees", getEmployees)          // دریافت تمام کارمندان
 	app.Post("/employees", addEmployee)          // اضافه کردن کارمند جدید
 	app.Put("/employees/:id", updateEmployee)    // به‌روزرسانی اطلاعات کارمند
 	app.Delete("/employees/:id", deleteEmployee) // حذف کارمند
 
-	// ** تعریف مسیرهای مدیریت تیم‌ها **
+	//تعریف مسیرهای مدیریت تیم‌ها
 	app.Get("/teams", getTeams)          // دریافت تمام تیم‌ها
 	app.Post("/teams", addTeam)          // اضافه کردن تیم جدید
 	app.Put("/teams/:id", updateTeam)    // به‌روزرسانی اطلاعات تیم
 	app.Delete("/teams/:id", deleteTeam) // حذف تیم
 
-	// ** تنظیم مدیریت خطاهای 500 برای برنامه فایبر **
+	//تنظیم مدیریت خطاهای 500 برای برنامه فایبر
 	app.Use(func(c *fiber.Ctx) error {
-		// این بلاک برای مدیریت خطاهای 500 است
 		if err := c.Next(); err != nil {
 			log.Printf("خطای سرور داخلی: %v", err)
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -90,19 +89,18 @@ func main() {
 		return nil
 	})
 
-	// ** شروع سرور بر روی پورت 3000 **
 	log.Fatal(app.Listen(":3000"))
 }
 
-// ** تابع برای دریافت تمام کارمندان **
+//تابع برای دریافت تمام کارمندان
 func getEmployees(c *fiber.Ctx) error {
-	// کوئری برای دریافت اطلاعات کارمندان و تیم مرتبط
+	//کوئری برای دریافت اطلاعات کارمندان و تیم مرتبط
 	query := `
 	SELECT e.id, e.name, e.email, e.phone, e.position, e.salary, e.age, e.team_id, t.name AS team_name
 	FROM employees e
 	LEFT JOIN teams t ON e.team_id = t.id`
 
-	// اجرای کوئری
+	//اجرای کوئری
 	rows, err := db.Query(query)
 	if err != nil {
 		return c.Status(500).SendString("خطا در دریافت اطلاعات کارمندان")
@@ -119,17 +117,17 @@ func getEmployees(c *fiber.Ctx) error {
 		employees = append(employees, emp)
 	}
 
-	return c.JSON(employees) // بازگشت اطلاعات کارمندان به صورت JSON
+	return c.JSON(employees) //بازگشت اطلاعات کارمندان به صورت JSON
 }
 
-// ** تابع برای اضافه کردن کارمند جدید **
+//تابع برای اضافه کردن کارمند جدید
 func addEmployee(c *fiber.Ctx) error {
 	emp := new(Employee) // ایجاد یک مدل خالی برای دریافت داده‌های ورودی
 	if err := c.BodyParser(emp); err != nil {
 		return c.Status(400).SendString("داده‌های ورودی نامعتبر")
 	}
 
-	// کوئری برای درج اطلاعات کارمند جدید
+	//کوئری برای درج اطلاعات کارمند جدید
 	query := `
 	INSERT INTO employees (name, email, phone, position, salary, age, team_id) 
 	VALUES (?, ?, ?, ?, ?, ?, ?)`
@@ -138,21 +136,21 @@ func addEmployee(c *fiber.Ctx) error {
 		return c.Status(500).SendString("خطا در اضافه کردن کارمند")
 	}
 
-	// دریافت شناسه کارمند جدید
+	//دریافت شناسه کارمند جدید
 	id, _ := result.LastInsertId()
 	emp.ID = int(id)
 	return c.Status(201).JSON(emp)
 }
 
-// ** تابع برای به‌روزرسانی اطلاعات کارمند **
+//تابع برای به‌روزرسانی اطلاعات کارمند
 func updateEmployee(c *fiber.Ctx) error {
-	id := c.Params("id") // دریافت شناسه کارمند از مسیر
-	emp := new(Employee) // ایجاد یک مدل خالی برای دریافت داده‌های ورودی
+	id := c.Params("id") //دریافت شناسه کارمند از مسیر
+	emp := new(Employee) //ایجاد یک مدل خالی برای دریافت داده‌های ورودی
 	if err := c.BodyParser(emp); err != nil {
 		return c.Status(400).SendString("داده‌های ورودی نامعتبر")
 	}
 
-	// کوئری برای به‌روزرسانی اطلاعات کارمند
+	//کوئری برای به‌روزرسانی اطلاعات کارمند
 	query := `
 	UPDATE employees 
 	SET name = ?, email = ?, phone = ?, position = ?, salary = ?, age = ?, team_id = ?
@@ -165,11 +163,11 @@ func updateEmployee(c *fiber.Ctx) error {
 	return c.Status(200).JSON(emp)
 }
 
-// ** تابع برای حذف کارمند **
+//تابع برای حذف کارمند
 func deleteEmployee(c *fiber.Ctx) error {
-	id := c.Params("id") // دریافت شناسه کارمند از مسیر
+	id := c.Params("id") //دریافت شناسه کارمند از مسیر
 
-	// کوئری برای حذف کارمند
+	//کوئری برای حذف کارمند
 	_, err := db.Exec("DELETE FROM employees WHERE id = ?", id)
 	if err != nil {
 		return c.Status(500).SendString("خطا در حذف کارمند")
@@ -178,7 +176,7 @@ func deleteEmployee(c *fiber.Ctx) error {
 	return c.SendString("کارمند حذف شد")
 }
 
-// ** تابع برای دریافت تمام تیم‌ها **
+//تابع برای دریافت تمام تیم‌ها
 func getTeams(c *fiber.Ctx) error {
 	query := `SELECT t.id, t.name, t.description, t.leader_id, e.name AS leader_name, 
               (SELECT COUNT(*) FROM employees WHERE team_id = t.id) AS member_count
@@ -206,14 +204,14 @@ func getTeams(c *fiber.Ctx) error {
 	return c.JSON(teams)
 }
 
-// ** تابع برای اضافه کردن تیم جدید **
+//تابع برای اضافه کردن تیم جدید
 func addTeam(c *fiber.Ctx) error {
-	team := new(Team) // ایجاد یک مدل خالی برای دریافت داده‌های ورودی
+	team := new(Team)
 	if err := c.BodyParser(team); err != nil {
 		return c.Status(400).SendString("داده‌های ورودی نامعتبر")
 	}
 
-	// کوئری برای درج تیم جدید
+	//کوئری برای درج تیم جدید
 	query := `
 	INSERT INTO teams (name, description, leader_id) 
 	VALUES (?, ?, ?)`
@@ -222,21 +220,21 @@ func addTeam(c *fiber.Ctx) error {
 		return c.Status(500).SendString("خطا در اضافه کردن تیم")
 	}
 
-	// دریافت شناسه تیم جدید
+	//دریافت شناسه تیم جدید
 	id, _ := result.LastInsertId()
 	team.ID = int(id)
 	return c.Status(201).JSON(team)
 }
 
-// ** تابع برای به‌روزرسانی اطلاعات تیم **
+//تابع برای به‌روزرسانی اطلاعات تیم
 func updateTeam(c *fiber.Ctx) error {
-	id := c.Params("id") // دریافت شناسه تیم از مسیر
-	team := new(Team)    // ایجاد یک مدل خالی برای دریافت داده‌های ورودی
+	id := c.Params("id") 
+	team := new(Team)
 	if err := c.BodyParser(team); err != nil {
 		return c.Status(400).SendString("داده‌های ورودی نامعتبر")
 	}
 
-	// کوئری برای به‌روزرسانی اطلاعات تیم
+	//کوئری برای به‌روزرسانی اطلاعات تیم
 	query := `
 	UPDATE teams 
 	SET name = ?, description = ?, leader_id = ?
@@ -249,11 +247,9 @@ func updateTeam(c *fiber.Ctx) error {
 	return c.Status(200).JSON(team)
 }
 
-// ** تابع برای حذف تیم **
+//تابع برای حذف تیم
 func deleteTeam(c *fiber.Ctx) error {
-	id := c.Params("id") // دریافت شناسه تیم از مسیر
-
-	// کوئری برای حذف تیم
+	id := c.Params("id")
 	_, err := db.Exec("DELETE FROM teams WHERE id = ?", id)
 	if err != nil {
 		return c.Status(500).SendString("خطا در حذف تیم")
