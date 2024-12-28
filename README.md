@@ -66,7 +66,7 @@ go mod tidy
 ```
 اگر با ارور ۴۰۳ هنگام دانلود مواجه شدید دستور زیر را اعمال کنید و سپس مراحل را از اول انجام دهید.
 ```bash
-export GOPROXY=https://goproxy.io,direct
+set GOPROXY=https://proxy.golang.org,direct
 ```
 برای اجرای سرویس، از دستور زیر استفاده کنید:
 
