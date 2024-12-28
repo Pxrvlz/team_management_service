@@ -50,14 +50,14 @@ CREATE TABLE IF NOT EXISTS teams (
 
 ### 2. نصب سرویس Go
 
-برای اجرای سرویس Go، ابتدا کد پروژه را کلون کنید:
+برای اجرای سرویس Go، ابتدا کد پروژه را با استفاده از CMD کلون کنید:
 
 ```bash
 git clone https://github.com/Pxrvlz/team_management_service.git
 cd team_management_service
 ```
 
-سپس dependenciesهای Go را نصب کنید ابتدا به دایرکتوری `API` بروید:
+سپس dependenciesهای Go را نصب کنید ابتدا به دایرکتوری `API` fبروید:
 ```bash
 cd API
 ```
